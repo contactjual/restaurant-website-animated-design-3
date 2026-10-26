@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAVORA | Fine Dining & Sensory Parallax Art</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FBF8F3',
+                        offwhite: '#F5EFE6',
+                        charcoal: '#1A1A18',
+                        tomato: '#C84B31',
+                        burntorange: '#D96B27',
+                        gold: '#C8A962',
+                        golddark: '#A68742',
+                        cardbg: '#FAF5ED'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base Styles & Custom Scrollbar */
+        * {
+            cursor: none !important; /* Hide default cursor to use attached custom glowing cursor */
+        }
+
+        ::selection {
+            background-color: #C84B31;
+            color: #FBF8F3;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5EFE6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C8A962;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C84B31;
+        }
+
+        /* Perspective Setup */
+        .perspective-container {
+            perspective: 1400px;
+        }
+        .preserve-3d {
+            transform-style: preserve-3d;
+        }
+
+        /* Glassmorphism Styling */
+        .glass-panel {
+            background: rgba(251, 248, 243, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(200, 169, 98, 0.25);
+        }
+
+        /* 3D Dynamic Extruded Heading Text Effect */
+        .hero-heading-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+            text-shadow: 
+                0 1px 0 #C8A962,
+                0 2px 0 #A68742,
+                0 3px 0 #8C6D2D,
+                0 4px 0 #73561B,
+                0 6px 1px rgba(0,0,0,0.1),
+                0 0 5px rgba(0,0,0,0.1),
+                0 10px 15px rgba(0,0,0,0.15),
+                0 20px 30px rgba(0,0,0,0.2);
+        }
+
+        .hero-heading-italic-3d {
+            transform-style: preserve-3d;
+            text-shadow: 
+                0 1px 0 #A63B24,
+                0 2px 0 #8A2D1A,
+                0 3px 0 #6E2010,
+                0 5px 12px rgba(200, 75, 49, 0.35),
+                0 15px 25px rgba(200, 75, 49, 0.25);
+        }
+
+        /* Infinite Horizontal Auto-Scrolling Marquee Tape */
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .marquee-track {
+            display: flex;
+            width: 200%;
+            animation: marqueeScroll 22s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        /* Amplified Floating & Rotation Physics */
+        @keyframes floatExtreme {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(-28px) rotate(12deg) scale(1.08); }
+        }
+        @keyframes floatExtremeRev {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(26px) rotate(-14deg) scale(1.06); }
+        }
+        @keyframes steamRise {
+            0% { transform: translateY(0) scaleX(1); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-40px) scaleX(1.4); opacity: 0; }
+        }
+
+        .animate-float-slow {
+            animation: floatExtreme 6s ease-in-out infinite;
+        }
+        .animate-float-rev {
+            animation: floatExtremeRev 7s ease-in-out infinite;
+        }
+        .steam-line {
+            animation: steamRise 3s ease-out infinite;
+        }
+
+        /* ==========================================
+           MULTIDIRECTIONAL SCROLL REVEAL ANIMATIONS
+           ========================================== */
+        .reveal-item {
+            opacity: 0;
+            will-change: opacity, transform;
+            transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Slide In Left */
+        .reveal-left {
+            transform: translateX(-60px);
+        }
+
+        /* Slide In Right */
+        .reveal-right {
+            transform: translateX(60px);
+        }
+
+        /* Slide Up / Fade Up */
+        .reveal-up {
+            transform: translateY(50px);
+        }
+
+        /* Zoom / Scale In */
+        .reveal-scale {
+            transform: scale(0.82) translateY(30px);
+        }
+
+        /* Revealed State */
+        .reveal-item.is-revealed {
+            opacity: 1;
+            transform: translateX(0) translateY(0) scale(1);
+        }
+
+        /* Cascading Delay Classes for Sequential Reveal */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.22s; }
+        .delay-3 { transition-delay: 0.34s; }
+        .delay-4 { transition-delay: 0.46s; }
+
+        /* ==========================================
+           ATTACHED CUSTOM CURSOR & GLOWING BADGE
+           ========================================== */
+        #custom-cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #C84B31;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #C84B31;
+            transition: transform 0.05s ease-out;
+        }
+
+        #interactive-follower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: rgba(200, 169, 98, 0.75);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 25px rgba(200, 169, 98, 0.55), inset 0 0 10px rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1A1A18;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .interactive-hovered #interactive-follower {
+            width: 110px;
+            height: 110px;
+            background: rgba(200, 75, 49, 0.92);
+            color: #FBF8F3;
+            box-shadow: 0 0 40px rgba(200, 75, 49, 0.75);
+            border: 1px solid rgba(251, 248, 243, 0.6);
+        }
+
+        .interactive-hovered #custom-cursor-dot {
+            background: #FBF8F3;
+            transform: translate(-50%, -50%) scale(1.5);
+            box-shadow: 0 0 12px #FBF8F3;
+        }
+
+        /* Noise Texture Overlay */
+        .bg-noise {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        /* Reduced Motion Fallback */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-item {
+                transition: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .parallax-layer {
+                transform: none !important;
+            }
+            #interactive-follower, #custom-cursor-dot {
+                display: none !important;
+            }
+            * {
+                cursor: auto !important;
+            }
+            .marquee-track {
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-cream text-charcoal font-sans antialiased overflow-x-hidden selection:bg-tomato selection:text-cream relative bg-noise">
+
+    <!-- ==========================================
+         ATTACHED CUSTOM CURSOR & GLOWING BADGE
+         ========================================== -->
+    <div id="custom-cursor-dot"></div>
+    <div id="interactive-follower">
+        <span id="follower-label">MOVE</span>
+    </div>
+
+    <!-- ==========================================
+         FLOATING RESTAURANT PARALLAX ELEMENTS (GLOBAL CANVAS)
+         ========================================== -->
+    <div id="parallax-viewport-canvas" class="fixed inset-0 pointer-events-none z-20 overflow-hidden">
+        
+        <!-- Element 1: Floating Teapot / Coffee Vessel (Top Left) -->
+        <div class="parallax-layer absolute top-[10%] left-[2%] w-28 md:w-44 drop-shadow-2xl animate-float-slow" data-depth="1.8" data-rotation="2.2">
+            <svg viewBox="0 0 100 80" class="w-full h-auto fill-charcoal/85 stroke-gold stroke-1">
+                <path d="M25 40 C15 40 5 50 15 65 C25 75 40 70 45 65" fill="none" stroke-width="4"/>
+                <ellipse cx="55" cy="50" rx="30" ry="22"/>
+                <path d="M85 45 L95 30 L80 38" fill="none" stroke-width="3"/>
+                <path d="M40 28 Q55 18 70 28 Z" fill="#C8A962"/>
+                <circle cx="55" cy="20" r="5" fill="#C84B31"/>
+            </svg>
+        </div>
+
+        <!-- Element 2: Floating Wine Goblet / Glass (Top Right) -->
+        <div class="parallax-layer absolute top-[20%] right-[3%] w-20 md:w-32 drop-shadow-2xl animate-float-rev" data-depth="2.4" data-rotation="-2.8">
+            <svg viewBox="0 0 80 120" class="w-full h-auto">
+                <path d="M20 10 L60 10 L50 60 Q40 75 30 60 Z" fill="rgba(200, 75, 49, 0.45)" stroke="#C8A962" stroke-width="2.5"/>
+                <path d="M25 35 Q40 45 55 35 Q50 60 40 60 Q30 60 25 35 Z" fill="#C84B31"/>
+                <line x1="40" y1="65" x2="40" y2="105" stroke="#C8A962" stroke-width="3.5"/>
+                <ellipse cx="40" cy="107" rx="20" ry="5" fill="#C8A962"/>
+            </svg>
+        </div>
+
+        <!-- Element 3: Floating Golden Culinary Spoon (Mid Left) -->
+        <div class="parallax-layer absolute top-[46%] left-[1%] w-20 md:w-28 drop-shadow-2xl opacity-90" data-depth="2.8" data-rotation="3.5">
+            <svg viewBox="0 0 60 200" class="w-full h-auto fill-gold">
+                <ellipse cx="30" cy="40" rx="22" ry="32"/>
+                <path d="M27 70 L27 190 Q30 195 33 190 L33 70 Z"/>
+            </svg>
+        </div>
+
+        <!-- Element 4: Floating Fresh Basil Leaves (Center Right) -->
+        <div class="parallax-layer absolute top-[53%] right-[2%] w-16 md:w-28 drop-shadow-2xl animate-float-slow" data-depth="1.5" data-rotation="-1.9">
+            <svg viewBox="0 0 100 100" class="w-full h-auto fill-emerald-800/90">
+                <path d="M50 5 Q78 25 72 62 Q50 98 45 98 Q38 98 28 62 Q22 25 50 5 Z"/>
+                <path d="M50 5 Q48 50 45 98" stroke="#A7F3D0" stroke-width="2.5" fill="none"/>
+            </svg>
+        </div>
+
+        <!-- Element 5: Floating Peppercorns & Spices (Lower Center Left) -->
+        <div class="parallax-layer absolute top-[70%] left-[4%] w-16 md:w-20 h-16 md:h-20 opacity-85 hidden md:block" data-depth="2.6" data-rotation="4.2">
+            <div class="w-6 h-6 rounded-full bg-gradient-to-br from-gray-800 to-black shadow-2xl transform rotate-45"></div>
+            <div class="w-4 h-4 rounded-full bg-gradient-to-br from-amber-700 to-black shadow-lg translate-x-5 translate-y-3"></div>
+            <div class="w-5 h-5 rounded-full bg-tomato/90 shadow-lg translate-x-2 -translate-y-4"></div>
+        </div>
+
+        <!-- Element 6: Floating Cherry Tomato (Lower Right) -->
+        <div class="parallax-layer absolute top-[78%] right-[4%] w-16 md:w-24 drop-shadow-2xl animate-float-rev" data-depth="2.2" data-rotation="-3.2">
+            <svg viewBox="0 0 100 100" class="w-full h-auto">
+                <circle cx="50" cy="55" r="38" fill="url(#tomatoGradGlobal)"/>
+                <path d="M50 15 L45 5 L52 12 L60 3 L54 15 L68 10 L56 18 Z" fill="#2F5233"/>
+                <defs>
+                    <radialGradient id="tomatoGradGlobal" cx="35%" cy="35%" r="65%">
+                        <stop offset="0%" stop-color="#FF6B4A"/>
+                        <stop offset="70%" stop-color="#C84B31"/>
+                        <stop offset="100%" stop-color="#7A1C08"/>
+                    </radialGradient>
+                </defs>
+            </svg>
+        </div>
+        
+    </div>
+
+    <!-- ==========================================
+         NAVIGATION HEADER
+         ========================================== -->
+    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 glass-panel border-b border-gold/20 px-6 md:px-12 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#hero" class="flex items-center space-x-3 group interactive-target" data-label="HOME">
+                <span class="font-serif text-3xl md:text-4xl font-bold tracking-wider text-charcoal group-hover:text-tomato transition-colors">
+                    SAVORA
+                </span>
+                <span class="w-2.5 h-2.5 rounded-full bg-tomato animate-pulse"></span>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium tracking-wider uppercase text-charcoal/80">
+                <a href="#story" class="interactive-target hover:text-tomato transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-tomato hover:after:w-full after:transition-all" data-label="STORY">Philosophy</a>
+                <a href="#menu" class="interactive-target hover:text-tomato transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-tomato hover:after:w-full after:transition-all" data-label="TASTE">Signature Menu</a>
+                <a href="#ingredients" class="interactive-target hover:text-tomato transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-tomato hover:after:w-full after:transition-all" data-label="ANATOMY">Ingredients</a>
+                <a href="#kitchen" class="interactive-target hover:text-tomato transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-tomato hover:after:w-full after:transition-all" data-label="LAB">Kitchen</a>
+                <a href="#seasonal" class="interactive-target hover:text-tomato transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-tomato hover:after:w-full after:transition-all" data-label="HARVEST">Seasonal</a>
+            </nav>
+
+            <!-- CTA Reserve Button -->
+            <div class="flex items-center space-x-4">
+                <a href="#reservation" class="interactive-target px-5 py-2.5 md:px-6 md:py-3 rounded-full bg-charcoal text-cream font-medium text-xs md:text-sm tracking-widest uppercase hover:bg-tomato hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5" data-label="BOOK">
+                    Reserve Table
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10">
+
+        <!-- ==========================================
+             SECTION 1: IMMERSIVE PARALLAX HERO
+             ========================================== -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center pt-24 pb-16 px-6 overflow-hidden perspective-container">
+            
+            <!-- Dynamic Floating Background Glow -->
+            <div class="absolute inset-0 bg-radial-glow pointer-events-none opacity-60">
+                <div class="parallax-layer absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[750px] bg-gold/20 rounded-full blur-3xl" data-depth="0.2"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 mt-6">
+                
+                <!-- Left Editorial Text Content (Slide In Left & Fade Up Sequenced) -->
+                <div class="lg:col-span-5 text-center lg:text-left space-y-6 preserve-3d">
+                    
+                    <!-- Auto-Scrolling Transparent Glassmorphic Marquee Sub-Header -->
+                    <div class="w-full overflow-hidden rounded-full border border-gold/40 bg-cream/30 backdrop-blur-md py-1.5 shadow-sm reveal-item reveal-left">
+                        <div class="marquee-track space-x-8 text-golddark text-xs font-semibold tracking-widest uppercase">
+                            <span>HAUTE CUISINE • MICHELIN INSPIRED • SEASONAL HARVEST • AVANT-GARDE GASTRONOMY • BIODYNAMIC INGREDIENTS •</span>
+                            <span>HAUTE CUISINE • MICHELIN INSPIRED • SEASONAL HARVEST • AVANT-GARDE GASTRONOMY • BIODYNAMIC INGREDIENTS •</span>
+                        </div>
+                    </div>
+
+                    <!-- Dramatic 3D Multi-Layered Main Heading -->
+                    <h1 id="hero-heading-3d" class="hero-heading-3d font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-charcoal leading-[0.95] tracking-tight py-2 reveal-item reveal-up delay-1">
+                        Artistry <br/>
+                        <span class="hero-heading-italic-3d italic font-normal text-tomato inline-block transform translate-z-10">On A Plate.</span>
+                    </h1>
+                    
+                    <p class="text-charcoal/80 text-base md:text-lg max-w-md mx-auto lg:mx-0 leading-relaxed font-light reveal-item reveal-up delay-2">
+                        Where rare seasonal harvests meet avant-garde culinary technique. Experience an immersive dining journey crafted for the sensory connoisseur.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4 reveal-item reveal-right delay-3">
+                        <a href="#menu" class="interactive-target w-full sm:w-auto px-8 py-4 rounded-full bg-tomato text-cream font-semibold text-xs uppercase tracking-widest hover:bg-burntorange hover:shadow-2xl transition-all transform hover:-translate-y-1.5 text-center" data-label="EXPLORE">
+                            Explore Tasting Menu
+                        </a>
+                        <a href="#story" class="interactive-target w-full sm:w-auto px-8 py-4 rounded-full border border-charcoal/30 text-charcoal font-semibold text-xs uppercase tracking-widest hover:border-charcoal hover:bg-charcoal/5 transition-all text-center" data-label="READ">
+                            Our Philosophy
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Multi-Layered 3D Parallax Food Composition (Scale / Zoom In) -->
+                <div class="lg:col-span-7 relative h-[420px] sm:h-[500px] md:h-[600px] flex items-center justify-center reveal-item reveal-scale delay-2">
+                    
+                    <!-- Outer Decorative Aura Rings -->
+                    <div class="parallax-layer absolute w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] rounded-full border border-gold/50 opacity-80" data-depth="0.3" data-rotation="0.4"></div>
+                    <div class="parallax-layer absolute w-[260px] h-[260px] sm:w-[400px] sm:h-[400px] rounded-full border border-dashed border-tomato/40 opacity-60" data-depth="0.6" data-rotation="-0.8"></div>
+
+                    <!-- Main Center Plated Hero Image -->
+                    <div class="parallax-layer relative z-20 w-[280px] sm:w-[380px] md:w-[440px] aspect-square rounded-full shadow-2xl overflow-hidden border-4 border-cream hover:scale-105 transition-transform duration-700 interactive-target" data-depth="1.0" data-label="SAVOR">
+                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80" 
+                             alt="SAVORA Signature Dish" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='https://placehold.co/800x800/1A1A18/FBF8F3?text=SAVORA+Signature+Plating'"/>
+                    </div>
+
+                    <!-- Floating Coffee Cup (Wonderland Reference) -->
+                    <div class="parallax-layer absolute bottom-2 left-2 sm:left-10 z-30 w-28 sm:w-40 drop-shadow-2xl interactive-target" data-depth="2.5" data-rotation="-3.0" data-label="WOW">
+                        <svg viewBox="0 0 100 80" class="w-full h-auto">
+                            <ellipse cx="50" cy="70" rx="40" ry="8" fill="rgba(0,0,0,0.15)"/>
+                            <path d="M20 25 L80 25 L72 60 C70 68 30 68 28 60 Z" fill="#1A1A18" stroke="#C8A962" stroke-width="2"/>
+                            <path d="M80 30 C92 30 92 50 78 52" fill="none" stroke="#C8A962" stroke-width="3"/>
+                            <ellipse cx="50" cy="25" rx="30" ry="7" fill="#5C3A21"/>
+                        </svg>
+                    </div>
+
+                    <!-- Floating Rosemary Sprig -->
+                    <div class="parallax-layer absolute -top-8 left-6 sm:left-14 z-30 w-24 sm:w-32 drop-shadow-2xl" data-depth="1.8" data-rotation="-2.8">
+                        <svg viewBox="0 0 100 200" class="w-full h-auto fill-emerald-900 opacity-90">
+                            <path d="M50,190 Q52,100 50,10 M50,160 Q70,140 85,145 M50,130 Q30,110 15,115 M50,100 Q75,80 90,85 M50,70 Q25,50 10,55 M50,40 Q65,20 80,25" stroke="#2F5233" stroke-width="4" fill="none"/>
+                        </svg>
+                    </div>
+
+                    <!-- Floating Lemon Slice -->
+                    <div class="parallax-layer absolute top-8 right-4 z-30 w-20 sm:w-28 h-20 sm:h-28 drop-shadow-2xl animate-float-slow" data-depth="2.2" data-rotation="1.8">
+                        <div class="w-full h-full rounded-full border-4 border-amber-300 bg-amber-400/90 relative overflow-hidden flex items-center justify-center">
+                            <div class="w-full h-0.5 bg-amber-100 absolute rotate-0"></div>
+                            <div class="w-full h-0.5 bg-amber-100 absolute rotate-45"></div>
+                            <div class="w-full h-0.5 bg-amber-100 absolute rotate-90"></div>
+                            <div class="w-full h-0.5 bg-amber-100 absolute rotate-[135deg]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Scroll Indicator -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2 opacity-70 hover:opacity-100 transition-opacity">
+                <span class="text-[10px] uppercase tracking-widest text-charcoal font-semibold">Scroll To Explore</span>
+                <div class="w-5 h-9 rounded-full border-2 border-charcoal/40 flex items-start justify-center p-1">
+                    <div class="w-1 h-2 bg-tomato rounded-full animate-bounce"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 2: BRAND STORY & PHILOSOPHY
+             ========================================== -->
+        <section id="story" class="py-24 px-6 md:px-12 bg-offwhite relative overflow-hidden">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                
+                <!-- Split Left Image Composition (Slide In Left) -->
+                <div class="lg:col-span-6 relative reveal-item reveal-left">
+                    <div class="parallax-layer relative z-10 rounded-2xl overflow-hidden shadow-2xl aspect-[4/5] max-w-md mx-auto lg:max-w-none interactive-target" data-depth="0.2" data-label="CHEF">
+                        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1000&q=80" 
+                             alt="Chef Crafting Culinary Masterpiece" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='https://placehold.co/800x1000/1A1A18/FBF8F3?text=Chef+Artistry'"/>
+                    </div>
+                    <!-- Secondary Floating Frame -->
+                    <div class="parallax-layer absolute -bottom-8 -right-4 sm:-right-8 z-20 w-1/2 rounded-xl overflow-hidden shadow-2xl border-4 border-offwhite hidden sm:block interactive-target" data-depth="0.6" data-label="ORGANIC">
+                        <img src="https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?auto=format&fit=crop&w=600&q=80" 
+                             alt="Fresh Organic Culinary Herbs" 
+                             class="w-full h-auto object-cover"
+                             onerror="this.src='https://placehold.co/600x400/C84B31/FBF8F3?text=Fresh+Herbs'"/>
+                    </div>
+                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-gold/15 rounded-full blur-2xl pointer-events-none"></div>
+                </div>
+
+                <!-- Split Right Text Narrative (Slide In Right) -->
+                <div class="lg:col-span-6 space-y-8 reveal-item reveal-right delay-1">
+                    <div class="space-y-3">
+                        <span class="text-xs font-semibold uppercase tracking-widest text-tomato">Culinary Manifesto</span>
+                        <h2 class="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-charcoal leading-tight">
+                            Harmony of Soil, Fire, and Emotion.
+                        </h2>
+                    </div>
+                    <p class="text-charcoal/80 text-base md:text-lg leading-relaxed font-light">
+                        Founded in 2018, SAVORA was born from a singular obsession: to strip away culinary pretension and elevate pure, unadulterated flavors. Every ingredient is sourced directly from biodynamic micro-farms within 50 miles of our kitchen.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-6 pt-4 border-t border-charcoal/10">
+                        <div>
+                            <span class="block font-serif text-3xl md:text-4xl font-bold text-tomato">100%</span>
+                            <span class="text-xs uppercase tracking-wider text-charcoal/70">Organic & Foraged</span>
+                        </div>
+                        <div>
+                            <span class="block font-serif text-3xl md:text-4xl font-bold text-golddark">3 Stars</span>
+                            <span class="text-xs uppercase tracking-wider text-charcoal/70">International Acclaim</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <blockquote class="italic font-serif text-lg text-charcoal/90 border-l-2 border-tomato pl-4 py-1">
+                            "We do not merely prepare food; we compose edible memories that linger long after the last course."
+                        </blockquote>
+                        <span class="block mt-2 text-xs font-semibold uppercase tracking-widest text-charcoal/60">— Chef Marcus Vance, Executive Culinary Director</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 3: SIGNATURE MENU (MULTIDIRECTIONAL 3D TILT CARDS)
+             ========================================== -->
+        <section id="menu" class="py-24 px-6 md:px-12 bg-cream relative">
+            <div class="max-w-7xl mx-auto space-y-16">
+                <!-- Section Header (Fade Up) -->
+                <div class="text-center max-w-2xl mx-auto space-y-4 reveal-item reveal-up">
+                    <span class="text-xs font-semibold uppercase tracking-widest text-tomato">Epicurean Selections</span>
+                    <h2 class="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-charcoal">Signature Tasting Menu</h2>
+                    <p class="text-charcoal/70 text-sm md:text-base">
+                        Hover over each creation to experience perspective tilt and composition notes.
+                    </p>
+                </div>
+
+                <!-- Dishes Grid with Directional Entrance Dynamics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    
+                    <!-- Card 1 (Slide Left) -->
+                    <div class="tilt-card glass-panel rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl relative group cursor-pointer reveal-item reveal-left delay-1 border border-gold/30 interactive-target" data-label="DETAIL">
+                        <div class="relative h-56 rounded-xl overflow-hidden mb-6 shadow-md">
+                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80" 
+                                 alt="A5 Wagyu Ribeye" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                 onerror="this.src='https://placehold.co/600x400/1A1A18/FBF8F3?text=Wagyu+Ribeye'"/>
+                            <div class="absolute top-3 right-3 bg-charcoal/90 text-gold text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md">
+                                $145
+                            </div>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal group-hover:text-tomato transition-colors">A5 Miyazakigyu Wagyu</h3>
+                        <p class="text-xs text-charcoal/70 mt-2 leading-relaxed">Smoked bone marrow emulsion, charred ramp puree, fermented black garlic jus.</p>
+                        <div class="mt-4 pt-4 border-t border-gold/20 flex items-center justify-between text-[11px] font-semibold text-golddark uppercase tracking-wider">
+                            <span>Course 04</span>
+                            <span>Chef's Choice</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 (Fade Up) -->
+                    <div class="tilt-card glass-panel rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl relative group cursor-pointer reveal-item reveal-up delay-2 border border-gold/30 interactive-target" data-label="DETAIL">
+                        <div class="relative h-56 rounded-xl overflow-hidden mb-6 shadow-md">
+                            <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80" 
+                                 alt="Truffle Tagliatelle" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                 onerror="this.src='https://placehold.co/600x400/1A1A18/FBF8F3?text=Truffle+Tagliatelle'"/>
+                            <div class="absolute top-3 right-3 bg-charcoal/90 text-gold text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md">
+                                $85
+                            </div>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal group-hover:text-tomato transition-colors">Norcia Black Truffle</h3>
+                        <p class="text-xs text-charcoal/70 mt-2 leading-relaxed">Hand-rolled egg yolk tagliatelle, 36-month Parmigiano Reggiano crema, cultured butter.</p>
+                        <div class="mt-4 pt-4 border-t border-gold/20 flex items-center justify-between text-[11px] font-semibold text-golddark uppercase tracking-wider">
+                            <span>Course 02</span>
+                            <span>Handcrafted</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 (Slide Left) -->
+                    <div class="tilt-card glass-panel rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl relative group cursor-pointer reveal-item reveal-left delay-3 border border-gold/30 interactive-target" data-label="DETAIL">
+                        <div class="relative h-56 rounded-xl overflow-hidden mb-6 shadow-md">
+                            <img src="https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80" 
+                                 alt="Chilean Sea Bass" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                 onerror="this.src='https://placehold.co/600x400/1A1A18/FBF8F3?text=Sea+Bass'"/>
+                            <div class="absolute top-3 right-3 bg-charcoal/90 text-gold text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md">
+                                $110
+                            </div>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal group-hover:text-tomato transition-colors">Wild Chilean Sea Bass</h3>
+                        <p class="text-xs text-charcoal/70 mt-2 leading-relaxed">Miso-mirin glaze, baby bok choy, lemongrass dashi broth, crispy lotus root.</p>
+                        <div class="mt-4 pt-4 border-t border-gold/20 flex items-center justify-between text-[11px] font-semibold text-golddark uppercase tracking-wider">
+                            <span>Course 03</span>
+                            <span>Ocean Fresh</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 (Slide Right) -->
+                    <div class="tilt-card glass-panel rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl relative group cursor-pointer reveal-item reveal-right delay-4 border border-gold/30 interactive-target" data-label="DETAIL">
+                        <div class="relative h-56 rounded-xl overflow-hidden mb-6 shadow-md">
+                            <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80" 
+                                 alt="Deconstructed Dessert" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                 onerror="this.src='https://placehold.co/600x400/1A1A18/FBF8F3?text=Matcha+Sphere'"/>
+                            <div class="absolute top-3 right-3 bg-charcoal/90 text-gold text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md">
+                                $45
+                            </div>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal group-hover:text-tomato transition-colors">Matcha Opalys Sphere</h3>
+                        <p class="text-xs text-charcoal/70 mt-2 leading-relaxed">Valrhona white chocolate shell, Uji matcha mousse, Yuzu gel, candied sesame crunch.</p>
+                        <div class="mt-4 pt-4 border-t border-gold/20 flex items-center justify-between text-[11px] font-semibold text-golddark uppercase tracking-wider">
+                            <span>Course 05</span>
+                            <span>Dessert Art</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 4: INTERACTIVE INGREDIENT EXPERIENCE
+             ========================================== -->
+        <section id="ingredients" class="py-28 px-6 md:px-12 bg-offwhite relative overflow-hidden">
+            <div class="max-w-7xl mx-auto text-center space-y-6 mb-12 reveal-item reveal-up">
+                <span class="text-xs font-semibold uppercase tracking-widest text-tomato">Deconstructed Mastery</span>
+                <h2 class="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-charcoal">The Anatomy of Flavor</h2>
+                <p class="text-charcoal/70 text-sm md:text-base max-w-xl mx-auto">
+                    Move your cursor across the canvas to control the floating ingredients revolving around our signature dish.
+                </p>
+            </div>
+
+            <!-- Central Interactive Ingredient Canvas Container (Zoom / Scale In Entrance) -->
+            <div class="relative w-full max-w-4xl mx-auto h-[480px] sm:h-[580px] flex items-center justify-center reveal-item reveal-scale delay-1">
+                
+                <!-- Main Plated Dish Centerpiece -->
+                <div class="parallax-layer relative z-20 w-56 sm:w-80 h-56 sm:h-80 rounded-full shadow-2xl border-4 border-cream overflow-hidden interactive-target" data-depth="0.3" data-label="FRESH">
+                    <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80" 
+                         alt="Fresh Salad Ingredient Dish" 
+                         class="w-full h-full object-cover"
+                         onerror="this.src='https://placehold.co/600x600/1A1A18/FBF8F3?text=Plated+Masterpiece'"/>
+                </div>
+
+                <!-- Floating Orbiting Ingredient 1: Star Anise -->
+                <div class="parallax-layer absolute top-[10%] left-[10%] sm:left-[18%] z-30 w-20 sm:w-24 drop-shadow-2xl interactive-target" data-depth="1.5" data-rotation="2.5" data-label="ANISE">
+                    <div class="w-full h-full rounded-full bg-amber-900/90 p-3 flex items-center justify-center text-amber-100 text-xs font-bold shadow-lg border border-amber-500/40">
+                        Star Anise
+                    </div>
+                </div>
+
+                <!-- Floating Orbiting Ingredient 2: Garlic Clove -->
+                <div class="parallax-layer absolute bottom-[15%] left-[8%] sm:left-[14%] z-30 w-22 sm:w-28 drop-shadow-2xl interactive-target" data-depth="1.1" data-rotation="-1.5" data-label="GARLIC">
+                    <div class="w-full h-full rounded-full bg-stone-100 p-4 flex items-center justify-center text-charcoal text-xs font-bold shadow-xl border border-stone-300">
+                        Garlic
+                    </div>
+                </div>
+
+                <!-- Floating Orbiting Ingredient 3: Chili Pepper -->
+                <div class="parallax-layer absolute top-[18%] right-[8%] sm:right-[16%] z-30 w-20 sm:w-28 drop-shadow-2xl interactive-target" data-depth="1.3" data-rotation="1.8" data-label="CHILI">
+                    <div class="w-full h-full rounded-full bg-tomato text-cream p-3 flex items-center justify-center text-xs font-bold shadow-lg border border-red-400">
+                        Chili
+                    </div>
+                </div>
+
+                <!-- Floating Orbiting Ingredient 4: Sea Salt Flakes -->
+                <div class="parallax-layer absolute bottom-[12%] right-[10%] sm:right-[18%] z-30 w-20 sm:w-24 drop-shadow-2xl interactive-target" data-depth="1.7" data-rotation="-2.0" data-label="SALT">
+                    <div class="w-full h-full rounded-full bg-white/95 p-2 flex items-center justify-center text-charcoal text-xs font-bold shadow-md border border-gray-300">
+                        Sea Salt
+                    </div>
+                </div>
+
+                <!-- Subtle Background Orbit Ring -->
+                <div class="parallax-layer absolute w-[380px] sm:w-[540px] h-[380px] sm:h-[540px] rounded-full border border-gold/30 pointer-events-none" data-depth="0.1" data-rotation="0.1"></div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 5: BEHIND THE KITCHEN (CINEMATIC)
+             ========================================== -->
+        <section id="kitchen" class="py-28 px-6 md:px-12 bg-charcoal text-cream relative overflow-hidden">
+            <!-- Background Dark Atmosphere Image -->
+            <div class="absolute inset-0 opacity-25 pointer-events-none">
+                <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1600&q=80" 
+                     alt="Atmospheric Dark Kitchen" 
+                     class="w-full h-full object-cover"
+                     onerror="this.src='https://placehold.co/1600x900/1A1A18/FBF8F3?text=Kitchen+Atmosphere'"/>
+            </div>
+
+            <div class="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Narrative (Slide Left) -->
+                <div class="lg:col-span-6 space-y-8 reveal-item reveal-left">
+                    <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full border border-gold/40 bg-gold/10 text-gold text-xs font-semibold uppercase tracking-widest">
+                        <span>The Culinary Lab</span>
+                    </div>
+                    <h2 class="font-serif text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+                        Precision Meets Passion in the Shadows.
+                    </h2>
+                    <p class="text-cream/70 text-base md:text-lg leading-relaxed font-light">
+                        Behind our copper doors, temperature precision meets artistic intuition. Every broth is simmered for 48 hours, every sauce strained to silky perfection.
+                    </p>
+
+                    <!-- Steam Visual Lines Effect -->
+                    <div class="flex items-end space-x-3 h-12 pt-4">
+                        <div class="w-1 bg-gradient-to-t from-gold to-transparent h-8 rounded-full steam-line" style="animation-delay: 0s;"></div>
+                        <div class="w-1 bg-gradient-to-t from-gold to-transparent h-12 rounded-full steam-line" style="animation-delay: 0.4s;"></div>
+                        <div class="w-1 bg-gradient-to-t from-gold to-transparent h-6 rounded-full steam-line" style="animation-delay: 0.8s;"></div>
+                        <span class="text-xs uppercase tracking-widest text-gold text-center pl-2">Live Kitchen Atmosphere</span>
+                    </div>
+                </div>
+
+                <!-- Right Visual Plating Card (Scale / Zoom In) -->
+                <div class="lg:col-span-6 relative flex items-center justify-center reveal-item reveal-scale delay-2">
+                    <div class="parallax-layer relative z-10 rounded-2xl overflow-hidden border border-gold/30 shadow-2xl max-w-md w-full interactive-target" data-depth="0.3" data-label="FIRE">
+                        <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=800&q=80" 
+                             alt="Chef Plating Fine Food" 
+                             class="w-full h-auto object-cover"
+                             onerror="this.src='https://placehold.co/800x1000/1A1A18/FBF8F3?text=Chef+Plating'"/>
+                    </div>
+
+                    <!-- Floating Copper Ladle -->
+                    <div class="parallax-layer absolute -bottom-10 -left-6 z-20 w-28 sm:w-36 drop-shadow-2xl interactive-target" data-depth="0.9" data-rotation="1.2" data-label="COPPER">
+                        <svg viewBox="0 0 100 250" class="w-full h-auto fill-amber-700 opacity-90">
+                            <path d="M45,10 L55,10 L53,160 C75,165 85,190 70,210 C50,230 20,210 35,185 L47,160 Z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 6: SEASONAL INGREDIENTS & HARVEST
+             ========================================== -->
+        <section id="seasonal" class="py-24 px-6 md:px-12 bg-cream relative">
+            <div class="max-w-7xl mx-auto space-y-16">
+                <div class="text-center max-w-2xl mx-auto space-y-4 reveal-item reveal-up">
+                    <span class="text-xs font-semibold uppercase tracking-widest text-tomato">Earth's Calendar</span>
+                    <h2 class="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-charcoal">Autumn Harvest Highlights</h2>
+                    <p class="text-charcoal/70 text-sm md:text-base">
+                        Our menu evolves weekly depending on what our partner micro-farms harvest at peak maturity.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Seasonal Item 1 (Slide Left) -->
+                    <div class="glass-panel p-8 rounded-2xl space-y-4 reveal-item reveal-left delay-1 border border-gold/30 interactive-target" data-label="SEASON">
+                        <div class="w-12 h-12 rounded-full bg-tomato/10 text-tomato flex items-center justify-center font-serif text-2xl font-bold">
+                            01
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal">White Alba Truffle</h3>
+                        <p class="text-xs text-charcoal/70 leading-relaxed">Foraged exclusively in Piedmont, Italy. Shaved tableside over fresh egg pasta and warm fondues.</p>
+                        <span class="inline-block text-[10px] uppercase font-semibold tracking-wider px-3 py-1 bg-gold/15 text-golddark rounded-full">Peak: Oct – Dec</span>
+                    </div>
+
+                    <!-- Seasonal Item 2 (Fade Up) -->
+                    <div class="glass-panel p-8 rounded-2xl space-y-4 reveal-item reveal-up delay-2 border border-gold/30 interactive-target" data-label="SEASON">
+                        <div class="w-12 h-12 rounded-full bg-tomato/10 text-tomato flex items-center justify-center font-serif text-2xl font-bold">
+                            02
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal">Hokkaido Sea Urchin</h3>
+                        <p class="text-xs text-charcoal/70 leading-relaxed">Air-flown tri-weekly from Northern Japan. Exceptionally sweet, creamy texture with ocean finish.</p>
+                        <span class="inline-block text-[10px] uppercase font-semibold tracking-wider px-3 py-1 bg-gold/15 text-golddark rounded-full">Peak: Year-Round</span>
+                    </div>
+
+                    <!-- Seasonal Item 3 (Slide Right) -->
+                    <div class="glass-panel p-8 rounded-2xl space-y-4 reveal-item reveal-right delay-3 border border-gold/30 interactive-target" data-label="SEASON">
+                        <div class="w-12 h-12 rounded-full bg-tomato/10 text-tomato flex items-center justify-center font-serif text-2xl font-bold">
+                            03
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-charcoal">Heirloom Chanterelles</h3>
+                        <p class="text-xs text-charcoal/70 leading-relaxed">Wild harvested from Pacific Northwest old-growth forests. Sautéed with shallots and thyme butter.</p>
+                        <span class="inline-block text-[10px] uppercase font-semibold tracking-wider px-3 py-1 bg-gold/15 text-golddark rounded-full">Peak: Sep – Nov</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 7: RESERVATION & DINING EXPERIENCE
+             ========================================== -->
+        <section id="reservation" class="py-24 px-6 md:px-12 bg-offwhite relative">
+            <div class="max-w-5xl mx-auto glass-panel p-8 md:p-14 rounded-3xl shadow-2xl border border-gold/30 relative overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <div class="lg:col-span-5 space-y-6 reveal-item reveal-left">
+                        <span class="text-xs font-semibold uppercase tracking-widest text-tomato">Tableside Sanctuary</span>
+                        <h2 class="font-serif text-4xl sm:text-5xl font-bold text-charcoal leading-tight">
+                            Reserve Your Experience.
+                        </h2>
+                        <p class="text-charcoal/70 text-sm leading-relaxed">
+                            Due to our intimate dining room seating of 12 tables, reservations are released 30 days in advance.
+                        </p>
+                        <div class="space-y-2 text-xs text-charcoal/80 font-medium">
+                            <p>• Tasting Menu (7 Courses): $220 / person</p>
+                            <p>• Sommelier Wine Pairing: $140 / person</p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Reservation Form Form (Slide In Right / Up) -->
+                    <div class="lg:col-span-7 bg-cream p-6 md:p-8 rounded-2xl shadow-inner space-y-4 reveal-item reveal-right delay-2">
+                        <form id="res-form" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-charcoal/70 mb-1">Date</label>
+                                    <input type="date" required class="w-full px-4 py-2.5 rounded-xl border border-charcoal/20 bg-white text-xs text-charcoal focus:outline-none focus:border-tomato"/>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-charcoal/70 mb-1">Time</label>
+                                    <select class="w-full px-4 py-2.5 rounded-xl border border-charcoal/20 bg-white text-xs text-charcoal focus:outline-none focus:border-tomato">
+                                        <option>5:30 PM</option>
+                                        <option>7:00 PM</option>
+                                        <option>8:30 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-charcoal/70 mb-1">Guests</label>
+                                    <select class="w-full px-4 py-2.5 rounded-xl border border-charcoal/20 bg-white text-xs text-charcoal focus:outline-none focus:border-tomato">
+                                        <option>2 Guests</option>
+                                        <option>4 Guests</option>
+                                        <option>6 Guests (Private Room)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-charcoal/70 mb-1">Full Name</label>
+                                    <input type="text" placeholder="e.g. Julian Vance" required class="w-full px-4 py-2.5 rounded-xl border border-charcoal/20 bg-white text-xs text-charcoal focus:outline-none focus:border-tomato"/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-semibold uppercase tracking-wider text-charcoal/70 mb-1">Special Dietary Requests</label>
+                                <textarea rows="2" placeholder="Allergies, anniversaries, or preferences..." class="w-full px-4 py-2 rounded-xl border border-charcoal/20 bg-white text-xs text-charcoal focus:outline-none focus:border-tomato"></textarea>
+                            </div>
+
+                            <button type="submit" class="interactive-target w-full py-3.5 rounded-xl bg-tomato text-cream font-semibold text-xs uppercase tracking-widest hover:bg-burntorange transition-all shadow-lg hover:shadow-xl" data-label="CONFIRM">
+                                Request Table Reservation
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION 8: CLOSING CTA & EDITORIAL FOOTER
+             ========================================== -->
+        <footer class="bg-charcoal text-cream pt-20 pb-12 px-6 md:px-12 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto space-y-16">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-12 border-b border-cream/10 pb-16">
+                    
+                    <!-- Footer Col 1: Brand -->
+                    <div class="md:col-span-5 space-y-6 reveal-item reveal-left">
+                        <span class="font-serif text-4xl font-bold tracking-wider text-cream">SAVORA</span>
+                        <p class="text-cream/60 text-xs md:text-sm max-w-sm leading-relaxed font-light">
+                            An immersive fine dining sensory experience where gastronomy meets 3D architectural elegance.
+                        </p>
+                        <div class="text-xs text-gold font-semibold uppercase tracking-widest">
+                            742 Fifth Avenue, New York, NY 10019
+                        </div>
+                    </div>
+
+                    <!-- Footer Col 2: Hours -->
+                    <div class="md:col-span-3 space-y-3 text-xs text-cream/70 reveal-item reveal-up delay-1">
+                        <h4 class="font-serif text-lg font-bold text-cream uppercase tracking-wider mb-2">Operating Hours</h4>
+                        <p><span class="text-gold">Tue – Thu:</span> 5:30 PM – 10:30 PM</p>
+                        <p><span class="text-gold">Fri – Sat:</span> 5:00 PM – 11:30 PM</p>
+                        <p><span class="text-gold">Sun:</span> 5:00 PM – 10:00 PM</p>
+                        <p><span class="text-tomato">Mon:</span> Closed for Harvest</p>
+                    </div>
+
+                    <!-- Footer Col 3: Newsletter -->
+                    <div class="md:col-span-4 space-y-4 reveal-item reveal-right delay-2">
+                        <h4 class="font-serif text-lg font-bold text-cream uppercase tracking-wider">The Private Circle</h4>
+                        <p class="text-xs text-cream/60">Subscribe for seasonal menu previews & cellar releases.</p>
+                        <form id="newsletter-form" class="flex space-x-2">
+                            <input type="email" placeholder="Your email address..." required class="px-4 py-2 rounded-lg bg-cream/10 text-cream text-xs border border-cream/20 focus:outline-none focus:border-gold flex-1"/>
+                            <button type="submit" class="interactive-target px-4 py-2 rounded-lg bg-tomato text-cream text-xs font-semibold uppercase tracking-wider hover:bg-burntorange transition-colors" data-label="JOIN">
+                                Join
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- Copyright & Bottom Bar -->
+                <div class="flex flex-col sm:flex-row items-center justify-between text-[11px] text-cream/40 space-y-4 sm:space-y-0">
+                    <p>© 2026 SAVORA Haute Gastronomy Group. All rights reserved.</p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="hover:text-cream transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-cream transition-colors">Terms of Experience</a>
+                        <a href="#" class="hover:text-cream transition-colors">Press Kit</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- ==========================================
+         RESERVATION CONFIRMATION MODAL SIMULATION
+         ========================================== -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-charcoal/80 backdrop-blur-md z-50 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-cream rounded-2xl max-w-md w-full p-8 shadow-2xl border border-gold/40 text-center space-y-6 transform scale-95 transition-transform duration-300" id="modal-box">
+            <div class="w-16 h-16 rounded-full bg-tomato/10 text-tomato flex items-center justify-center mx-auto">
+                <svg viewBox="0 0 24 24" class="w-8 h-8 stroke-current fill-none" stroke-width="2">
+                    <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h3 class="font-serif text-3xl font-bold text-charcoal">Reservation Requested</h3>
+            <p class="text-xs text-charcoal/70 leading-relaxed">
+                Thank you for choosing SAVORA. Our Maître d' will review your request and contact you via email within 2 hours to confirm your seating details.
+            </p>
+            <button id="modal-close-btn" class="interactive-target w-full py-3 rounded-xl bg-charcoal text-cream font-semibold text-xs uppercase tracking-widest hover:bg-tomato transition-colors" data-label="CLOSE">
+                Return To SAVORA
+            </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         PHYSICS ENGINE, ATTACHED CURSOR & MULTIDIRECTIONAL REVEALS
+         ========================================== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // Mouse Physics State
+            const mouse = {
+                targetX: 0,
+                targetY: 0,
+                currentX: 0,
+                currentY: 0,
+                pixelX: window.innerWidth / 2,
+                pixelY: window.innerHeight / 2,
+                badgeX: window.innerWidth / 2,
+                badgeY: window.innerHeight / 2,
+                ease: 0.08,
+                badgeEase: 0.22 // Fast elastic snapping for attached cursor feel
+            };
+
+            let scrollY = window.scrollY;
+
+            // DOM Elements
+            const parallaxLayers = document.querySelectorAll('.parallax-layer');
+            const tiltCards = document.querySelectorAll('.tilt-card');
+            const revealElems = document.querySelectorAll('.reveal-item');
+            const follower = document.getElementById('interactive-follower');
+            const cursorDot = document.getElementById('custom-cursor-dot');
+            const followerLabel = document.getElementById('follower-label');
+            const interactiveTargets = document.querySelectorAll('.interactive-target');
+            const heroHeading = document.getElementById('hero-heading-3d');
+
+            // Track Mouse Position Centered
+            window.addEventListener('mousemove', (e) => {
+                if (prefersReducedMotion) return;
+
+                // Normalized mouse coordinates (-1 to 1)
+                mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.targetY = (e.clientY / window.innerHeight) * 2 - 1;
+
+                // Exact pixel coordinates
+                mouse.pixelX = e.clientX;
+                mouse.pixelY = e.clientY;
+            });
+
+            // Track Scroll Position
+            window.addEventListener('scroll', () => {
+                scrollY = window.scrollY;
+            });
+
+            // Interactive Hover Target Listener
+            interactiveTargets.forEach(target => {
+                target.addEventListener('mouseenter', () => {
+                    document.body.classList.add('interactive-hovered');
+                    const customLabel = target.getAttribute('data-label') || 'EXPLORE';
+                    followerLabel.textContent = customLabel;
+                });
+                target.addEventListener('mouseleave', () => {
+                    document.body.classList.remove('interactive-hovered');
+                    followerLabel.textContent = 'MOVE';
+                });
+            });
+
+            // Card 3D Tilt Effect
+            tiltCards.forEach(card => {
+                if (prefersReducedMotion) return;
+
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((y - centerY) / centerY) * -16;
+                    const rotateY = ((x - centerX) / centerX) * 16;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(16px)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)`;
+                });
+            });
+
+            // Main 60 FPS Render Loop
+            function renderLoop() {
+                if (!prefersReducedMotion) {
+                    // Normalized Lerp
+                    mouse.currentX += (mouse.targetX - mouse.currentX) * mouse.ease;
+                    mouse.currentY += (mouse.targetY - mouse.currentY) * mouse.ease;
+
+                    // Direct Attached Custom Cursor Dot
+                    cursorDot.style.transform = `translate3d(${mouse.pixelX}px, ${mouse.pixelY}px, 0px) translate(-50%, -50%)`;
+
+                    // Attached Glowing Badge Lerp
+                    mouse.badgeX += (mouse.pixelX - mouse.badgeX) * mouse.badgeEase;
+                    mouse.badgeY += (mouse.pixelY - mouse.badgeY) * mouse.badgeEase;
+                    follower.style.transform = `translate3d(${mouse.badgeX}px, ${mouse.badgeY}px, 0px) translate(-50%, -50%)`;
+
+                    // 3D Heading Interactive Tilt Physics
+                    if (heroHeading) {
+                        const headingRotX = mouse.currentY * -18;
+                        const headingRotY = mouse.currentX * 18;
+                        heroHeading.style.transform = `perspective(1000px) rotateX(${headingRotX}deg) rotateY(${headingRotY}deg) translateZ(20px)`;
+                    }
+
+                    // Amplified Multi-Depth Floating Parallax Elements
+                    parallaxLayers.forEach(layer => {
+                        const depth = parseFloat(layer.getAttribute('data-depth')) || 0.5;
+                        const rotFactor = parseFloat(layer.getAttribute('data-rotation')) || 0;
+
+                        const translateX = mouse.currentX * (depth * 90);
+                        const translateY = (mouse.currentY * (depth * 90)) + (scrollY * (depth * 0.18));
+                        const rotation = (scrollY * 0.05 * rotFactor) + (mouse.currentX * 22 * rotFactor);
+
+                        layer.style.transform = `translate3d(${translateX}px, ${translateY}px, 0px) rotate(${rotation}deg)`;
+                    });
+                }
+
+                requestAnimationFrame(renderLoop);
+            }
+
+            // Intersection Observer for Dynamic Directional Scroll Reveals
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                    }
+                });
+            }, {
+                threshold: 0.12,
+                rootMargin: '0px 0px -40px 0px'
+            });
+
+            revealElems.forEach(el => revealObserver.observe(el));
+
+            // Reservation Form & Modal Simulation Controls
+            const resForm = document.getElementById('res-form');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalBox = document.getElementById('modal-box');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+
+            if (resForm) {
+                resForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    modalBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+                    modalBox.classList.remove('scale-95');
+                    modalBox.classList.add('scale-100');
+                });
+            }
+
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', closeModal);
+            }
+            if (modalBackdrop) {
+                modalBackdrop.addEventListener('click', (e) => {
+                    if (e.target === modalBackdrop) closeModal();
+                });
+            }
+
+            function closeModal() {
+                modalBackdrop.classList.add('opacity-0', 'pointer-events-none');
+                modalBox.classList.remove('scale-100');
+                modalBox.classList.add('scale-95');
+                if (resForm) resForm.reset();
+            }
+
+            // Newsletter Handler
+            const newsForm = document.getElementById('newsletter-form');
+            if (newsForm) {
+                newsForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    newsForm.reset();
+                });
+            }
+
+            // Start loop on load
+            window.onload = function() {
+                renderLoop();
+            };
+
+        })();
+    </script>
+</body>
+</html>
